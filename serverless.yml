@@ -1,0 +1,45 @@
+service: FastApi
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-east-1
+package:
+  individually: True
+  patterns:
+    - "!*/**"
+    - "!**"
+plugins:
+  - serverless-pydeps
+functions:
+  app:
+    handler: main.handler
+    package: 
+      patterns:
+        - "handler.py"
+        - "main.py"
+    events:
+      - http:
+          path: /
+          method: GET
+          cors: true
+      - http:
+          method: any
+          path: /{proxy+}
+  app2:
+    handler: main.handler
+    package: 
+      patterns:
+        - "handler.py"
+        - "main.py"
+    events:
+      - http:
+          path: /items/{item_id}
+          method: GET
+          cors: true
+          request:
+            parameters:
+              paths:
+                item_id: true
+      - http:
+          method: any
+          path: /{proxy+}
